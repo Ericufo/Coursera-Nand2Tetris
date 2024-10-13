@@ -1,11 +1,54 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/4/Fill.asm
+// Program: Fill.asm
+//Project: Fill.asm
+//usage: press the keyboard and the screen will turn black,
+//       leave the keyboard and the screen will return white.
 
-// Runs an infinite loop that listens to the keyboard input. 
-// When a key is pressed (any key), the program blackens the screen,
-// i.e. writes "black" in every pixel. When no key is pressed, 
-// the screen should be cleared.
+(LOOP)
+    //relocate the rendering address every time
+    @SCREEN
+    D=A
+    @address
+    M=D
 
-//// Replace this comment with your code.
+    //detect whether the keyboard is pressing or not
+    @KBD
+    D=M
+    @WHITE
+    D;JEQ
+    @BLACK
+    D;JGT
+
+    //set the color to white
+(WHITE)
+    @color
+    M=0
+    @FILL
+    0;JMP
+
+    //set the color to black
+(BLACK)
+    @color
+    M=-1
+    0;JMP
+
+    //fill the screen with the set colorA
+(FILL)
+    @color
+    D=M
+    @address
+    A=M
+    M=D
+    
+    A=A+1
+    D=A
+    @address
+    M=D
+
+    //detect whether reach to the end of screen area in the ram
+    @KBD
+    D=A-D
+    @FILL
+    D;JGT
+
+    @LOOP
+    0;JMP
